@@ -36,9 +36,7 @@ jj-push() {
         echo "\n"
         # For some reason, applying the template duplicates the bookmark name.
         # Appending "%%" and then stripping with `sed` deduplicates.
-        local bm_name=$(
-          jj bookmark list --revisions "@ & mine()" --template "name ++ '%%'" \
-          | sed "s/%%.*//g")
+        local bm_name=$(jj-bookmark-name "@")
         jj git push && \
           __jj-maybe-new --quiet && \
           jj describe -m "Placeholder for edits to $bm_name"
@@ -54,9 +52,7 @@ jj-push() {
             return 1
         fi
         echo "\n"
-        local bm_name=$(
-          jj bookmark list --revisions "@ & mine()" --template "name ++ '%%'" \
-          | sed "s/%%.*//g")
+        local bm_name=$(jj-bookmark-name "@-")
         jj bookmark move --from @- && \
           jj git push && \
           __jj-maybe-new --quiet && \
@@ -67,6 +63,23 @@ jj-push() {
     echo "Can't find a tracked bookmark to push. " \
       "Try \`jj log\` and \`jj-new-bookmark\`."
     return 2
+}
+
+
+jj-bookmark-name() {
+    if [[ $# -ne 1 ]]; then
+        echo "Usage: jj-bookmark-name <change-id>"
+        echo "Prints the name of the first bookmark found on this change."
+        echo "\`change-id\` is required; if you want \`@\`, pass explicitly."
+        return 1
+    fi
+    # There may be multiple bookmarks on one change, even if `jj log` shows just
+    # one. (In particular, the same bookmark name often appears twice, for
+    # reasons I haven't figured out.) `jj bookmark list` with just
+    # `--template "name"` concatenates all of# them, so we add a "%%" separator
+    # to strip away all but the first.
+    jj bookmark list --revisions "$1 & mine()" --template "name ++ '%%'" \
+    | sed "s/%%.*//g"
 }
 
 
