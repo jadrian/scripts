@@ -34,12 +34,10 @@ jj-push() {
             return 1
         fi
         echo "\n"
-        # For some reason, applying the template duplicates the bookmark name.
-        # Appending "%%" and then stripping with `sed` deduplicates.
-        local bm_name=$(jj-bookmark-name "@")
+        local bm_name=$(jj-bookmark-name "@" | sed 's/jsard-//')
         jj git push && \
           __jj-maybe-new --quiet && \
-          jj describe -m "Placeholder for edits to $bm_name"
+          jj describe -m "$bm_name PLACEHOLDER"
         return 0
     fi
 
@@ -52,11 +50,11 @@ jj-push() {
             return 1
         fi
         echo "\n"
-        local bm_name=$(jj-bookmark-name "@-")
+        local bm_name=$(jj-bookmark-name "@" | sed 's/jsard-//')
         jj bookmark move --from @- && \
           jj git push && \
           __jj-maybe-new --quiet && \
-          jj describe -m "Placeholder for edits to $bm_name"
+          jj describe -m "$bm_name PLACEHOLDER"
         return 0
     fi
 
