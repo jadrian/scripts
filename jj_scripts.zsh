@@ -36,8 +36,9 @@ jj-push() {
         echo "\n"
         local bm_name=$(jj-bookmark-name "@" | sed 's/jsard-//')
         jj git push && \
-          __jj-maybe-new --quiet && \
-          jj describe -m "$bm_name PLACEHOLDER"
+          __jj-maybe-new --insert-after @ --quiet && \
+          jj describe -m "$bm_name PLACEHOLDER" && \
+          jj bookmark move --from @-
         return 0
     fi
 
@@ -53,8 +54,9 @@ jj-push() {
         local bm_name=$(jj-bookmark-name "@" | sed 's/jsard-//')
         jj bookmark move --from @- && \
           jj git push && \
-          __jj-maybe-new --quiet && \
-          jj describe -m "$bm_name PLACEHOLDER"
+          __jj-maybe-new --insert-after @ --quiet && \
+          jj describe -m "$bm_name PLACEHOLDER" && \
+          jj bookmark move --from @-
         return 0
     fi
 
