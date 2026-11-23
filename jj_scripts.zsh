@@ -9,10 +9,10 @@
 jj-new-bookmark() {
     if [[ $# -ne 1 ]]; then
         echo "Usage: jj-new-bookmark <name>"
-        echo "Creates a new bookmark \`jsard-<name>\` and tracks it."
+        echo "Creates a new bookmark \`js/<name>\` and tracks it."
         return 1
     fi
-    jj bookmark create "jsard-$1" && jj bookmark track "jsard-$1"
+    jj bookmark create "js/$1" && jj bookmark track "js/$1"
 }
 
 
@@ -34,7 +34,7 @@ jj-push() {
             return 1
         fi
         echo "\n"
-        local bm_name=$(jj-bookmark-name "@" | sed 's/jsard-//')
+        local bm_name=$(jj-bookmark-name "@" | sed 's|js/||')
         jj git push && \
           __jj-maybe-new --insert-after @ --quiet && \
           jj describe -m "$bm_name PLACEHOLDER" && \
@@ -51,7 +51,7 @@ jj-push() {
             return 1
         fi
         echo "\n"
-        local bm_name=$(jj-bookmark-name "@" | sed 's/jsard-//')
+        local bm_name=$(jj-bookmark-name "@" | sed 's|js/||')
         jj bookmark move --from @- && \
           jj git push && \
           __jj-maybe-new --insert-after @ --quiet && \
