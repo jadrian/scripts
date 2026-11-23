@@ -91,7 +91,7 @@ jj-check-out-remote-branch() {
     fi
     git switch "$1" && \
       git pull origin "$1" && \
-      jj bookmark track "${1}@origin" \
+      jj bookmark track "${1}@origin" && \
       jj status
 }
 
